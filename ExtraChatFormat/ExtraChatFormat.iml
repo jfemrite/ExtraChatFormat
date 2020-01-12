@@ -10,11 +10,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://D:/lfn-us/spigot-versions/1_8_R3/spigot-1.8.8.jar!/" />
+          <root url="jar://D:/lfn-us/spigot-versions/1_15_R1/spigot-1.15.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://D:/lfn-us/spigot-versions/1_8_R3/spigot-1.8.8.jar!/" />
+          <root url="jar://D:/lfn-us/spigot-versions/1_15_R1/spigot-1.15.1.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
