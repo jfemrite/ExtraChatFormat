@@ -3,7 +3,6 @@ package io.github.extrachatformat;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,28 +10,29 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Main extends JavaPlugin implements Listener {
 
-    private YamlConfiguration fileConfig;
-    private File file;
+    public static YamlConfiguration fileConfig;
+    private static File file;
+    public static FileConfiguration config;
 
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
+
+        this.getConfig().options().copyDefaults();
+        saveDefaultConfig();
+        config = this.getConfig();
+
         try {
             initiateFiles();
         } catch (IOException e) {
@@ -40,6 +40,7 @@ public class Main extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
         System.out.println("PLUGIN SUCCESSFULLY ENABLED");
+        Bukkit.getPluginManager().registerEvents(new ColorListener(), this);
     }
 
     @Override
@@ -54,116 +55,13 @@ public class Main extends JavaPlugin implements Listener {
         return false;
     }
 
-    @EventHandler
-    public void inventoryInteract(InventoryClickEvent e) {
-
-        if(ChatColor.stripColor(e.getView().getTitle()).equalsIgnoreCase("Please select a color!")) {
-            Player player = (Player) e.getWhoClicked();
-            ItemStack clickedItem = e.getCurrentItem();
-            if(clickedItem.getData().getData() == (byte) 13) {
-                fileConfig.set(player.getUniqueId().toString(), "DARK_GREEN");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 14) {
-                fileConfig.set(player.getUniqueId().toString(), "RED");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 1) {
-                fileConfig.set(player.getUniqueId().toString(), "GOLD");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 5) {
-                fileConfig.set(player.getUniqueId().toString(), "GREEN");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 4) {
-                fileConfig.set(player.getUniqueId().toString(), "YELLOW");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 11) {
-                fileConfig.set(player.getUniqueId().toString(), "DARK_BLUE");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 9) {
-                fileConfig.set(player.getUniqueId().toString(), "DARK_AQUA");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 10) {
-                fileConfig.set(player.getUniqueId().toString(), "DARK_PURPLE");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 2) {
-                fileConfig.set(player.getUniqueId().toString(), "LIGHT_PURPLE");
-                saveFiles();
-            } else if(clickedItem.getData().getData() == (byte) 0) {
-                fileConfig.set(player.getUniqueId().toString(), "WHITE");
-                saveFiles();
-            }
-            e.setCancelled(true);
-        }
-
-    }
-
     public void openInventory(Player player) {
         Inventory inv = Bukkit.createInventory(null, 18, ChatColor.GREEN + "Please select a color!");
-        List<ItemStack> invItems = new ArrayList<>();
-        ItemStack dark_green = new ItemStack(Material.GREEN_STAINED_GLASS_PANE, 1);
-        ItemMeta dark_greenMeta = dark_green.getItemMeta();
-        dark_greenMeta.setDisplayName(ChatColor.DARK_GREEN + "Dark Green");
-        dark_green.setItemMeta(dark_greenMeta);
-        invItems.add(dark_green);
-
-        ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
-        ItemMeta redMeta = red.getItemMeta();
-        redMeta.setDisplayName(ChatColor.RED + "Red");
-        red.setItemMeta(redMeta);
-        invItems.add(red);
-
-        ItemStack gold_orange = new ItemStack(Material.ORANGE_STAINED_GLASS_PANE, 1);
-        ItemMeta gold_orangeMeta = gold_orange.getItemMeta();
-        gold_orangeMeta.setDisplayName(ChatColor.GOLD + "Gold/Orange");
-        gold_orange.setItemMeta(gold_orangeMeta);
-        invItems.add(gold_orange);
-
-        ItemStack green = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
-        ItemMeta greenMeta = green.getItemMeta();
-        greenMeta.setDisplayName(ChatColor.GREEN + "Green");
-        green.setItemMeta(greenMeta);
-        invItems.add(green);
-
-        ItemStack yellow = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE, 1);
-        ItemMeta yellowMeta = yellow.getItemMeta();
-        yellowMeta.setDisplayName(ChatColor.YELLOW + "Yellow");
-        yellow.setItemMeta(yellowMeta);
-        invItems.add(yellow);
-
-        ItemStack dark_blue = new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1);
-        ItemMeta dark_blueMeta = dark_blue.getItemMeta();
-        dark_blueMeta.setDisplayName(ChatColor.DARK_BLUE + "Dark Blue");
-        dark_blue.setItemMeta(dark_blueMeta);
-        invItems.add(dark_blue);
-
-        ItemStack cyan = new ItemStack(Material.CYAN_STAINED_GLASS_PANE, 1);
-        ItemMeta cyanMeta = cyan.getItemMeta();
-        cyanMeta.setDisplayName(ChatColor.DARK_AQUA + "Cyan");
-        cyan.setItemMeta(cyanMeta);
-        invItems.add(cyan);
-
-        ItemStack dark_purple = new ItemStack(Material.PURPLE_STAINED_GLASS_PANE, 1);
-        ItemMeta dark_purpleMeta = dark_purple.getItemMeta();
-        dark_purpleMeta.setDisplayName(ChatColor.DARK_PURPLE + "Dark Purple");
-        dark_purple.setItemMeta(dark_purpleMeta);
-        invItems.add(dark_purple);
-
-        ItemStack purple = new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE, 1);
-        ItemMeta purpleMeta = purple.getItemMeta();
-        purpleMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Light Purple");
-        purple.setItemMeta(purpleMeta);
-        invItems.add(purple);
-
-        ItemStack white = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, 1);
-        ItemMeta whiteMeta = white.getItemMeta();
-        whiteMeta.setDisplayName(ChatColor.WHITE + "White");
-        white.setItemMeta(whiteMeta);
-        invItems.add(white);
-
-        for(int i = 0; i < invItems.size(); i++) {
-            inv.addItem(invItems.get(i));
+        for(int i = 0; i < Colors.colorList().size(); i++) {
+            inv.addItem(Colors.colorList().get(i));
         }
-        player.openInventory(inv);
 
+        player.openInventory(inv);
     }
 
     @EventHandler
@@ -215,18 +113,59 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
         ChatColor color;
-        if(!fileConfig.getString(player.getUniqueId().toString()).isEmpty()) {
+        if(!fileConfig.getString(player.getUniqueId().toString()).isEmpty() && !fileConfig.getString(player.getUniqueId().toString()).equalsIgnoreCase("RAINBOW")) {
             color = ChatColor.valueOf(fileConfig.getString(player.getUniqueId().toString()));
         } else {
             color = ChatColor.WHITE;
         }
-        e.setFormat(color + player.getDisplayName() + ChatColor.RESET + ": " + ChatColor.translateAlternateColorCodes('&', message));
+
+        String name = player.getDisplayName();
+        if(fileConfig.getString(player.getUniqueId().toString()).equalsIgnoreCase("RAINBOW")) {
+            List<String> playerLetterList = new ArrayList<>();
+            for(int i = 0; i < player.getName().length(); i++) {
+                char x = player.getName().charAt(i);
+                String y = Character.toString(x);
+                playerLetterList.add(y);
+            }
+            for(int i = 0; i < playerLetterList.size(); i++) {
+                if(i == 0 || i == 7 || i == 14) {
+                    playerLetterList.set(i, ChatColor.RED + playerLetterList.get(i));
+                } else if (i == 1 || i == 8 || i == 15) {
+                    playerLetterList.set(i, ChatColor.GOLD + playerLetterList.get(i));
+                } else if (i == 2 || i == 9 || i == 16) {
+                    playerLetterList.set(i, ChatColor.YELLOW + playerLetterList.get(i));
+                } else if (i == 3 || i == 10) {
+                    playerLetterList.set(i, ChatColor.GREEN + playerLetterList.get(i));
+                } else if (i == 4 || i == 11) {
+                    playerLetterList.set(i, ChatColor.AQUA + playerLetterList.get(i));
+                } else if (i == 5 || i == 12) {
+                    playerLetterList.set(i, ChatColor.BLUE + playerLetterList.get(i));
+                } else if (i == 6 || i == 13) {
+                    playerLetterList.set(i, ChatColor.DARK_PURPLE + playerLetterList.get(i));
+                }
+            }
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < playerLetterList.size(); i++) {
+                sb.append(playerLetterList.get(i));
+            }
+            name = sb.toString();
+        } else {
+
+        }
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        String format = config.getString("chat-format");
+        format = ChatColor.translateAlternateColorCodes('&', format);
+        format = format.replace("{player}", name);
+        format = format.replace("{message}", message);
+
+
+        e.setFormat(color + format);
 
     }
 
-    private void saveFiles() {
+    public static void saveFiles() {
         try {
-            fileConfig.save(this.file);
+            fileConfig.save(Main.file);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ main: io.github.extrachatformat.Main
 version: 1.0.0
 name: ExtraChatFormat
 author: BlueJ
+api-version: 1.13
 commands:
   color:
     description: Opens color GUI to select player color name
