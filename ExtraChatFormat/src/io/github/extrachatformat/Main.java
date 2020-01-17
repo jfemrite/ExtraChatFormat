@@ -113,14 +113,14 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
         ChatColor color;
-        if(!fileConfig.getString(player.getUniqueId().toString()).isEmpty() && !fileConfig.getString(player.getUniqueId().toString()).equalsIgnoreCase("RAINBOW")) {
+        if(fileConfig.get(player.getUniqueId().toString()) != null && !fileConfig.getString(player.getUniqueId().toString()).equalsIgnoreCase("RAINBOW")) {
             color = ChatColor.valueOf(fileConfig.getString(player.getUniqueId().toString()));
         } else {
             color = ChatColor.WHITE;
         }
 
         String name = player.getDisplayName();
-        if(fileConfig.getString(player.getUniqueId().toString()).equalsIgnoreCase("RAINBOW")) {
+        if(fileConfig.get(player.getUniqueId().toString()) != null && fileConfig.getString(player.getUniqueId().toString()).equalsIgnoreCase("RAINBOW")) {
             List<String> playerLetterList = new ArrayList<>();
             for(int i = 0; i < player.getName().length(); i++) {
                 char x = player.getName().charAt(i);
@@ -149,8 +149,6 @@ public class Main extends JavaPlugin implements Listener {
                 sb.append(playerLetterList.get(i));
             }
             name = sb.toString();
-        } else {
-
         }
         message = ChatColor.translateAlternateColorCodes('&', message);
         String format = config.getString("chat-format");
